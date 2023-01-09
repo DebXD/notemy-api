@@ -7,6 +7,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False )
     password = db.Column(db.Text, nullable=False)
+    enc_key = db.Column(db.LargeBinary, unique=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     user_notes = db.relationship("Notes", backref="user")
@@ -20,8 +21,8 @@ class User(db.Model):
 
 class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text, nullable=True)
-    content = db.Column(db.Text, nullable=True)
+    title = db.Column(db.LargeBinary, nullable=True)
+    content = db.Column(db.LargeBinary, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))

@@ -1,12 +1,16 @@
 from flask import Blueprint, request, jsonify
-from src.database import User, db
+from src.models.database import User, db
 from werkzeug.security import check_password_hash, generate_password_hash
 from src.constants.http_status_codes import *
 from flask_bcrypt import bcrypt
 from src.utils.pwd_checker import is_password_complex
 import validators
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from cryptography.fernet import Fernet
+
+
 auth = Blueprint("auth",__name__, url_prefix="/api/v1/auth/")
+enc_key = Fernet.generate_key()
 
 @auth.route('/register/', methods=["POST"])
 def register():
@@ -15,32 +19,32 @@ def register():
     password = request.json['password']
 
     if len(password) < 6:
-        return jsonify({"error": "password is too short"}), HTTP_400_BAD_REQUEST
+        return jsonify({"message": "password is too short"}), HTTP_400_BAD_REQUEST
 
     if len(username) < 4:
-        return jsonify({"error": "username is too short"}), HTTP_400_BAD_REQUEST
+        return jsonify({"message": "username is too short"}), HTTP_400_BAD_REQUEST
 
     if not username.isalnum() or " " in username:
-        return jsonify({"error": "username should be alphanumeric, also no spaces allowed"}), HTTP_400_BAD_REQUEST
+        return jsonify({"message": "username should be alphanumeric, also no spaces allowed"}), HTTP_400_BAD_REQUEST
     
     if not (is_password_complex(password)):
-        return jsonify({"error" : "use a stronger password"}), HTTP_400_BAD_REQUEST
+        return jsonify({"message" : "use a stronger password"}), HTTP_400_BAD_REQUEST
 
     if not validators.email(email):
-        return jsonify({"error" : "email is not valid"}), HTTP_400_BAD_REQUEST
+        return jsonify({"message" : "email is not valid"}), HTTP_400_BAD_REQUEST
 
     if User.query.filter_by(email=email).first() is not None:
-        return jsonify({"error" : "email exists"}), HTTP_409_CONFLICT
+        return jsonify({"message" : "email exists"}), HTTP_409_CONFLICT
     
     if User.query.filter_by(username=username).first() is not None:
-        return jsonify({"error" : "username exists"}), HTTP_409_CONFLICT
+        return jsonify({"message" : "username exists"}), HTTP_409_CONFLICT
 
     # convert the password to byte-array(string)
     bytePwd = password.encode('utf-8')
     genSalt = bcrypt.gensalt()
     pwd_hash = bcrypt.hashpw(bytePwd, genSalt)
 
-    user = User(username = username, password=pwd_hash, email=email)
+    user = User(username = username, password=pwd_hash, email=email, enc_key=enc_key)
     db.session.add(user)
     db.session.commit()
     return jsonify({"message" : "User created", 
@@ -77,7 +81,7 @@ def login():
                 }
             ), HTTP_200_OK
 
-        return jsonify({"error" : "Wrong Credentials"}), HTTP_401_UNAUTHORIZED
+        return jsonify({"message" : "wrong credentials"}), HTTP_401_UNAUTHORIZED
 
 
 @auth.route('/me/', methods=["GET", "POST"])

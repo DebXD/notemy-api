@@ -1,9 +1,10 @@
 from flask import Flask, jsonify
 import os
-from src.auth import auth
-from src.notes import notes
-from src.database import db
+from src.views.auth import auth
+from src.views.notes import notes
+from src.models.database import db
 from flask_jwt_extended import JWTManager
+from src.constants.http_status_codes import *
 
 def create_app(test_config=None):
     app = Flask(__name__,
@@ -29,13 +30,13 @@ def create_app(test_config=None):
     app.register_blueprint(auth)
     app.register_blueprint(notes)
 
-
-    @app.route("/")
-    def hello():
-        return "hello world"
-
-    @app.route("/hello/")
-    def ola():
-        return jsonify({"message" : "HELLO WORLD"})
+    # error handling
+    @app.errorhandler(HTTP_404_NOT_FOUND)
+    def page_not_found(error):
+        return jsonify({"message" : "this page doesn't exist"}), HTTP_404_NOT_FOUND
+        
+    @app.errorhandler(HTTP_500_INTERNAL_SERVER_ERROR)
+    def server_error(error):
+        return jsonify({"message" : "something Went wrong on our side"}), HTTP_500_INTERNAL_SERVER_ERROR
 
     return app
