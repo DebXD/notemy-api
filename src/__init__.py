@@ -7,6 +7,7 @@ from flask_jwt_extended import JWTManager
 from src.constants.http_status_codes import *
 from flasgger import Swagger, swag_from
 from src.config.swagger import template, swagger_config
+import psycopg2
 
 def create_app(test_config=None):
     app = Flask(__name__,
