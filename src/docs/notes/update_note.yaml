@@ -1,0 +1,47 @@
+Update Note
+---
+tags:
+  - "Notes"
+parameters:
+  - in: header
+    name : "Authorization"
+    required : true
+
+  - in: path
+    name : "id"
+    required: true
+    schema:
+      type: "integer"
+      description: Numeric ID of the note to update
+  - name: body
+    description: "The body should contain title and content"
+  
+    in: body
+    required: false
+    schema:
+      type: object
+      required:
+        - "title"
+        - "content"
+      properties:
+        title:
+          type: "string"
+          example: "This is a title"
+        content:
+          type: "string"
+          example: "This is content"
+
+  
+    
+responses:
+  200:
+    description : "When a user tries to update notes"
+
+  400:
+    description: "Fails to give proper input"
+
+  401:
+    description : "Provides wrong Token"
+
+  404:
+    description : "Provides a wrong note id and that is not available"

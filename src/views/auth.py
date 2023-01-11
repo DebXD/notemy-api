@@ -7,12 +7,13 @@ from src.utils.pwd_checker import is_password_complex
 import validators
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from cryptography.fernet import Fernet
-
+from flasgger import swag_from
 
 auth = Blueprint("auth",__name__, url_prefix="/api/v1/auth/")
 enc_key = Fernet.generate_key()
 
 @auth.route('/register/', methods=["POST"])
+@swag_from('../docs/auth/register.yaml')
 def register():
     username = request.json['username'];
     email = request.json['email']
@@ -55,7 +56,8 @@ def register():
                     }}), HTTP_201_CREATED
 
 
-@auth.route('/login/', methods= ["GET", "POST"])
+@auth.route('/login/', methods=["POST"])
+@swag_from('../docs/auth/login.yaml')
 def login():
         email = request.json.get("email", "")
         password = request.json.get("password", "")
@@ -84,8 +86,10 @@ def login():
         return jsonify({"message" : "wrong credentials"}), HTTP_401_UNAUTHORIZED
 
 
-@auth.route('/me/', methods=["GET", "POST"])
+@auth.route('/me/', methods=["GET"])
+
 @jwt_required()
+@swag_from('../docs/auth/me.yaml')
 def getMe():
     user_id = get_jwt_identity()    
     user = User.query.filter_by(id=user_id).first()
@@ -94,7 +98,8 @@ def getMe():
         "email" : user.email
     }), HTTP_200_OK
 
-@auth.route('/token/refresh/', methods=["GET", "POST"])
+
+@auth.route('/token/refresh/', methods=["GET"])
 @jwt_required(refresh=True)
 def refreshUserToken():
     identity = get_jwt_identity()

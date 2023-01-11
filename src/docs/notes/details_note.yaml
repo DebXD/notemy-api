@@ -1,0 +1,25 @@
+Get details of a Specific Note
+---
+tags:
+  - "Notes"
+parameters:
+  - in: header
+    name : "Authorization"
+    required : true
+
+  - in: path
+    name : "id"
+    required: true
+    schema:
+      type: "integer"
+      description: "Numeric ID of the note to get"
+    
+responses:
+  200:
+    description : "When a user tries to get notes"
+
+  400:
+    description: "Fails to give proper input"
+
+  401:
+    description : "Provides a wrong Token"

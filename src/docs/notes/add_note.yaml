@@ -1,0 +1,35 @@
+Add Note
+---
+tags:
+  - "Notes"
+parameters:
+  - in: header
+    name : "Authorization"
+    required : true
+  - name: body
+    description: "The body should contain title and content"
+  
+    in: body
+    required: false
+    schema:
+      type: object
+      required:
+        - "title"
+        - "content"
+      properties:
+        title:
+          type: "string"
+          example: "This is a title"
+        content:
+          type: "string"
+          example: "This is content"
+
+responses:
+  201:
+    description: "When a user creates a note successfully"
+
+  400:
+    description: "Fails to give proper input"
+
+  401:
+    description : "Provides a wrong Token"

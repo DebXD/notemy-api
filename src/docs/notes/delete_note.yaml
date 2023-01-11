@@ -1,0 +1,28 @@
+Delete a Specific Note
+---
+tags:
+  - "Notes"
+parameters:
+  - in: header
+    name : "Authorization"
+    required : true
+      
+  - in: path
+    name : "id"
+    required: true
+    schema:
+      type: "integer"
+      description: "Numeric ID of the note to delete"
+    
+responses:
+  204:
+    description : "When a user deletes a note"
+
+  400:
+    description: "Fails to give proper input"
+
+  401:
+    description : "Provides wrong Token"
+
+  404:
+    description : "Provides wrong note id and that is not available"

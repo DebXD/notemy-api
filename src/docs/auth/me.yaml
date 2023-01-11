@@ -1,0 +1,20 @@
+User Info
+---
+tags:
+  - "Info"
+parameters:
+  - in: header
+    name : "Authorization"
+    scheme : "bearer"
+    bearerFormat : "JWT"
+    required : true
+      
+    
+    
+
+responses:
+  200:
+    description: "When a user data succesfully being fetched"
+
+  401:
+    description: "A user does not supplies correct token"
