@@ -1,32 +1,24 @@
 from flask import Flask, jsonify
-import os
 from src.views.auth import auth
 from src.views.notes import notes
 from src.models.database import db
 from flask_jwt_extended import JWTManager
 from src.constants.http_status_codes import *
-from flasgger import Swagger, swag_from
+from flasgger import Swagger
 from src.config.swagger import template, swagger_config
 import psycopg2
 from .extensions import db
-
+from decouple import config
 
 def create_app():
     app = Flask(__name__)
 
-    app.config.from_mapping(
-        SECRET_KEY=os.environ.get("SECRET_KEY"),
-        SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
-        JWT_SECRET_KEY=os.environ.get("JWT_SECRET_KEY"),
+    app.config['SECRET_KEY'] = config("SECRET_KEY")
+    app.config['SQLALCHEMY_DATABASE_URI'] = config("SQLALCHEMY_DB_URI")
+    app.config['JWT_SECRET_KEY'] = config("JWT_SECRET_KEY")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-        SWAGGER={
-            'title': 'Notemy API',
-            'uiversion': 3
-
-        }
-
-    )
-
+    db.init_app(app)
     JWTManager(app)
 
     app.register_blueprint(auth)
