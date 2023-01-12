@@ -1,8 +1,7 @@
 from flask import Blueprint, request, jsonify
 from src.models.database import User, db
-from werkzeug.security import check_password_hash, generate_password_hash
 from src.constants.http_status_codes import *
-from flask_bcrypt import bcrypt
+import bcrypt
 from src.utils.pwd_checker import is_password_complex
 import validators
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
@@ -66,9 +65,10 @@ def login():
 
         if user:
             # convert the password to byte-array
-            bytePwd = password.encode('utf-8')
+            # bytePwd = password
             # verify password
-            is_pass_correct = bcrypt.checkpw(bytePwd, user.password)  # user.password is taken from db
+            is_pass_correct = bcrypt.checkpw(password.encode(
+                'utf-8'), user.password)  # user.password is taken from db
             if is_pass_correct:
                 refresh = create_refresh_token(identity=user.id)
                 access = create_access_token(identity=user.id)

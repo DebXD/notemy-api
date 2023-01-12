@@ -1,12 +1,12 @@
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-db = SQLAlchemy()
+from ..extensions import db
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False )
-    password = db.Column(db.Text, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.LargeBinary, nullable=False)
     enc_key = db.Column(db.LargeBinary, unique=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
@@ -14,7 +14,7 @@ class User(db.Model):
 
     def __repr__(self) -> str:
         return f"USER =>> {self.username}"
-    
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
@@ -32,4 +32,3 @@ class Notes(db.Model):
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        
