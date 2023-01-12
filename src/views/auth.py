@@ -72,18 +72,19 @@ def login():
             if is_pass_correct:
                 refresh = create_refresh_token(identity=user.id)
                 access = create_access_token(identity=user.id)
-            return jsonify(
-                {
-                    "user" : {
-                        "refresh token" : refresh,
-                        "access token"  : access,
-                        "username" : user.username,
-                        "email" : user.email,
+            if True :
+                return jsonify(
+                    {
+                        "user" : {
+                            "refresh token" : refresh,
+                            "access token"  : access,
+                            "username" : user.username,
+                            "email" : user.email,
+                        }
                     }
-                }
-            ), HTTP_200_OK
-
-        return jsonify({"message" : "wrong credentials"}), HTTP_401_UNAUTHORIZED
+                ), HTTP_200_OK
+        else:
+            return jsonify({"message" : "wrong credentials"}), HTTP_401_UNAUTHORIZED
 
 
 @auth.route('/me/', methods=["GET"])
