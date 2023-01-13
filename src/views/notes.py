@@ -159,4 +159,44 @@ def deleteNote(id):
 
     db.session.delete(note)
     db.session.commit()
-    return jsonify({}), HTTP_204_NO_CONTENT
+    return jsonify({'message': "item deleted"}), HTTP_204_NO_CONTENT
+
+@notes.route("/search/", methods=['GET'])
+@jwt_required()
+@swag_from('../docs/notes/search_notes.yaml')
+def searchNote():
+    search = request.args.get('query')
+    if search == '':
+        return jsonify({'message' : 'no query given'}), HTTP_400_BAD_REQUEST
+     
+    userId = get_jwt_identity()
+    userNotes = Notes.query.filter_by(user_id=userId).all()
+    enc_key = User.query.filter_by(id=userId).first().enc_key
+    
+    foundNotes = []
+    for note in userNotes:
+        dec_title, dec_content = decryptNote(enc_key, note.title, note.content)
+        # combine note and title for search_text
+        text = dec_title.lower() + ' ' + dec_content.lower()
+        search_text = search.lower()
+
+        # find if there any maching words available
+        if text.find(search_text) == -1:
+            pass
+
+        else:
+            # append it to list as dic/key value pair
+            data = {    'id' : note.id,
+                        'title': dec_title,
+                        'content': dec_content,
+                        'created_at' : note.created_at,
+                        'updated_at' : note.updated_at
+                    }
+            foundNotes.append(data)
+            
+    if len(foundNotes) == 0:
+        return jsonify({'message' : 'no results found'}), HTTP_404_NOT_FOUND
+    
+    return jsonify({ 'data' : foundNotes}), HTTP_200_OK
+
+
