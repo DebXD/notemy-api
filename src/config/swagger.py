@@ -4,12 +4,12 @@ template = {
         "title": "Notemy API",
         "description": "API for Notemy",
         "contact": {
-            "responsibleOrganization": "",
+            "responsibleOrganization": "Swagger",
             "responsibleDeveloper": "https://github.com/debxd/",
             "email": "debxd@duck.com",
             "url": "www.twitter.com/debiprasadxd",
         },
-        "termsOfService": "www.twitter.com/debiprasadxd",
+        "termsOfService": "http://swagger.io/terms/",
         "version": "1.0"
     },
     "basePath": "/api/v1",  # base bash for blueprint registration

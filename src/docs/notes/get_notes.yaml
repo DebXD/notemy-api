@@ -9,7 +9,7 @@ parameters:
     required : true
   - in: query
     name : page
-    required : true
+    required : false
 
     
 responses:
