@@ -2,7 +2,7 @@
 - API Usage/Example/Test :
   https://notemy-api.deta.dev
 
-## Notes :
+## Tutorial :
 #### API Base Endpoint : `https://notemy-api.deta.dev/api/v1`
 ##### USER :
 - User Registration Endpoint : `/auth/register` <br>
