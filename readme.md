@@ -39,7 +39,7 @@ Request Type: `POST`<br>
  **Required Values in path* `id`
  
    - Note Update Endpoint : `/notes` <br>
- Type of Request : `PUT`<br>
+ Type of Request : `PATCH`<br>
  **Required header* `Authorization : Bearer <TOKEN>`<br>
  **Required Value in path* `id`
  **Required Values in JSON body* `title` `content`

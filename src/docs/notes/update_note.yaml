@@ -5,14 +5,16 @@ tags:
 parameters:
   - in: header
     name : "Authorization"
+    description: "Bearer <TOKEN>"
     required : true
 
   - in: path
-    name : "id"
-    required: true
+    name : "Note ID"
+    description: "Numeric ID of the note to update"
+    required: true 
     schema:
-      type: "integer"
-      description: Numeric ID of the note to update
+      type: integer
+      
   - name: body
     description: "The body should contain title and content"
   

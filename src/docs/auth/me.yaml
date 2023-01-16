@@ -5,6 +5,7 @@ tags:
 parameters:
   - in: header
     name : "Authorization"
+    description : "Bearer <TOKEN>"
     scheme : "bearer"
     bearerFormat : "JWT"
     required : true

@@ -5,21 +5,23 @@ tags:
 parameters:
   - in: header
     name : "Authorization"
+    description: "Bearer <TOKEN>"
     required : true
 
   - in: path
-    name : "id"
+    name : "Note ID"
+    description: "Numeric ID of the note to get"
     required: true
     schema:
       type: "integer"
-      description: "Numeric ID of the note to get"
+      
     
 responses:
   200:
-    description : "When a user tries to get notes"
+    description : "Successfully fetched notes"
 
   400:
-    description: "Fails to give proper input"
+    description: "Improper input"
 
   401:
-    description : "Provides a wrong Token"
+    description : "Wrong Token"

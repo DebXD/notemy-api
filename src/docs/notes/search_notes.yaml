@@ -6,18 +6,22 @@ tags:
 parameters:
   - in: header
     name : "Authorization"
+    description : "Bearer <TOKEN>"
     required : true
   - in: query
     name : query
+    description : "Search query"
     required : true
+    schema:
+      type: integer
 
     
 responses:
   200:
-    description : "When a user tries to get notes"
+    description : "Sucessfully fetched notes"
 
   400:
-    description: "Fails to give proper input"
+    description: "improper input"
 
   401:
-    description : "Provides a wrong Token"
+    description : "wrong Token"

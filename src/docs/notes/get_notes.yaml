@@ -6,18 +6,22 @@ tags:
 parameters:
   - in: header
     name : "Authorization"
+    description : "Bearer <TOKEN>"
     required : true
   - in: query
-    name : page
+    name : "Page No."
+    description : "Desired page number"
     required : false
+    schema:
+      type : integer
 
     
 responses:
   200:
-    description : "When a user tries to get notes"
+    description : "Succesfully fetched notes"
 
   400:
-    description: "Fails to give proper input"
+    description: "Improper input"
 
   401:
-    description : "Provides a wrong Token"
+    description : "Wrong Token"

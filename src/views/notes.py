@@ -104,11 +104,11 @@ def getNoteDetail(id):
     }), HTTP_200_OK
 
 
-@notes.route("/<int:id>/", methods=['PUT'])
+@notes.route("/<int:id>/", methods=['PATCH'])
 @jwt_required()
 @swag_from('../docs/notes/update_note.yaml')
 def updateNote(id):
-    if request.method == "PUT":
+    if request.method == "PATCH":
         title = request.json.get("title")
         content = request.json.get("content")
 

@@ -5,24 +5,26 @@ tags:
 parameters:
   - in: header
     name : "Authorization"
+    description : "Bearer <TOKEN>"
     required : true
       
   - in: path
-    name : "id"
+    name : "Note ID"
+    description: "Numeric ID of the note to delete"
     required: true
     schema:
       type: "integer"
-      description: "Numeric ID of the note to delete"
+     
     
 responses:
   204:
-    description : "When a user deletes a note"
+    description : "Successfully deleted that note"
 
   400:
-    description: "Fails to give proper input"
+    description: "Improper input"
 
   401:
-    description : "Provides wrong Token"
+    description : "Wrong Token"
 
   404:
-    description : "Provides wrong note id and that is not available"
+    description : "Wrong note id that is not available"
