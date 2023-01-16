@@ -14,8 +14,8 @@ template = {
     },
     "basePath": "/api/v1",  # base bash for blueprint registration
     "schemes": [
-        "http",
-        "https"
+        "https",
+        "http"
     ],
     # "securitySchemes": {
     #     "bearerAuth": {
