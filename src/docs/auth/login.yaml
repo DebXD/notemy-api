@@ -1,10 +1,10 @@
 User login
 ---
 tags:
-  - Authentication
+  - "Authentication"
 parameters:
   - name: body
-    description: The body should contain the user login credentials
+    description: "The body should contain the user login credentials"
     in: body
     required: true
     schema:
@@ -22,10 +22,10 @@ parameters:
           example: "********"
 responses:
   200:
-    description: When a user successfully logs in
+    description: "When a user successfully logs in"
 
   400:
-    description: Fails to login due to bad request data
+    description: "Fails to login due to bad request data"
 
   401:
-    description: A user supplies incorrect credentials
+    description: "A user supplies incorrect credentials"

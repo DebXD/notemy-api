@@ -1,0 +1,21 @@
+Refresh Access Token
+---
+tags:
+  - "Authentication"
+parameters:
+  - in: header
+    name : "Authorization"
+    description : "Refresh <TOKEN>"
+    scheme : "bearer"
+    bearerFormat : "JWT"
+    required : true
+      
+    
+    
+
+responses:
+  200:
+    description: "When a user data succesfully being fetched"
+
+  401:
+    description: "A user does not supplies correct token"

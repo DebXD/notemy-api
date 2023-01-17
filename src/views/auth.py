@@ -100,8 +100,9 @@ def getMe():
     }), HTTP_200_OK
 
 
-@auth.route('/token/refresh/', methods=["GET"])
+@auth.route('/token/refresh/', methods=["POST"])
 @jwt_required(refresh=True)
+@swag_from('../docs/auth/refresh_token.yaml')
 def refreshUserToken():
     identity = get_jwt_identity()
     access = create_access_token(identity=identity)
