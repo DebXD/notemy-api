@@ -96,7 +96,9 @@ def getMe():
     user = User.query.filter_by(id=user_id).first()
     return jsonify({
         "username" : user.username,
-        "email" : user.email
+        "email" : user.email,
+        "created_at" : user.created_at,
+        "updated_at" : user.updated_at
     }), HTTP_200_OK
 
 
