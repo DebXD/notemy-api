@@ -60,6 +60,11 @@ def getNotes():
     data = []
     for note in notes.items:
         dec_title, dec_content = decryptNote(enc_key, note.title, note.content)
+        if len(dec_title) > 30:
+            dec_title = dec_title[:26] + " ..."
+        if len(dec_content) > 80:
+            dec_content = dec_content[:76] + " ..."
+
         data.append({
             'id': note.id,
             'title': dec_title,
