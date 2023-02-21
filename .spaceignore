@@ -1,0 +1,6 @@
+liux-env/
+env/
+.envlocal
+
+__pycache__/
+.deta/
