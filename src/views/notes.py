@@ -171,8 +171,8 @@ def deleteNote(id):
 @swag_from('../docs/notes/search_notes.yaml')
 def searchNote():
     search = request.args.get('query')
-    if search == '':
-        return jsonify({'message' : 'no query given'}), HTTP_400_BAD_REQUEST
+    # if search == '':
+    #     return jsonify({'message' : 'no query given'}), HTTP_400_BAD_REQUEST
      
     userId = get_jwt_identity()
     userNotes = Notes.query.filter_by(user_id=userId).all()
