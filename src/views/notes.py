@@ -4,6 +4,7 @@ from src.constants.http_status_codes import *
 from flask_jwt_extended import get_jwt_identity , jwt_required
 from src.utils.enc_dec import encryptNote, decryptNote
 from flasgger import swag_from
+from sqlalchemy import desc
 
 
 notes = Blueprint("notes",__name__, url_prefix="/api/v1/notes/")
@@ -175,7 +176,8 @@ def searchNote():
     #     return jsonify({'message' : 'no query given'}), HTTP_400_BAD_REQUEST
      
     userId = get_jwt_identity()
-    userNotes = Notes.query.filter_by(user_id=userId).all()
+    userNotes = Notes.query.filter_by(
+        user_id=userId).order_by(desc(Notes.updated_at))
     enc_key = User.query.filter_by(id=userId).first().enc_key
     
     foundNotes = []
@@ -185,7 +187,7 @@ def searchNote():
         text = dec_title.lower() + ' ' + dec_content.lower()
         search_text = search.lower()
 
-        # find if there any maching words available
+        # find if there any maching words available or not
         if text.find(search_text) == -1:
             pass
 
