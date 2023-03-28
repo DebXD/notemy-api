@@ -25,7 +25,7 @@ class Notes(db.Model):
     content = db.Column(db.LargeBinary, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(
-        db.DateTime, default=datetime.now(), onupdate=datetime.now())
+        db.DateTime, onupdate=datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __repr__(self) -> str:

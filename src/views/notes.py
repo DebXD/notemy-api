@@ -55,7 +55,7 @@ def getNotes():
     page = request.args.get('page', 1, type=int)
 
     perPage = request.args.get('per_page', 5, int)
-    notes = Notes.query.filter_by(user_id=userId).paginate(
+    notes = Notes.query.filter_by(user_id=userId).order_by(desc(Notes.id)).paginate(
         page=page, per_page=perPage)
 
     data = []
@@ -177,7 +177,7 @@ def searchNote():
      
     userId = get_jwt_identity()
     userNotes = Notes.query.filter_by(
-        user_id=userId).order_by(desc(Notes.updated_at))
+        user_id=userId).order_by(desc(Notes.id))
     enc_key = User.query.filter_by(id=userId).first().enc_key
     
     foundNotes = []
