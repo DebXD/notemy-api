@@ -8,8 +8,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from cryptography.fernet import Fernet
 from flasgger import swag_from
 
-auth = Blueprint("auth",__name__, url_prefix="/api/v1/auth/")
-enc_key = Fernet.generate_key()
+auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth/")
 
 @auth.route('/register/', methods=["POST"])
 @swag_from('../docs/auth/register.yaml')
@@ -43,6 +42,9 @@ def register():
     bytePwd = password.encode('utf-8')
     genSalt = bcrypt.gensalt()
     pwd_hash = bcrypt.hashpw(bytePwd, genSalt)
+
+    # generate encryption key
+    enc_key = Fernet.generate_key()
 
     user = User(username = username, password=pwd_hash, email=email, enc_key=enc_key)
     db.session.add(user)
