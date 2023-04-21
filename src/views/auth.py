@@ -78,8 +78,8 @@ def login():
                 return jsonify(
                     {
                         "user" : {
-                            "refresh token" : refresh,
-                            "access token"  : access,
+                            "refresh_token": refresh,
+                            "access_token": access,
                             "username" : user.username,
                             "email" : user.email,
                         }
@@ -111,5 +111,5 @@ def refreshUserToken():
     identity = get_jwt_identity()
     access = create_access_token(identity=identity)
     return jsonify({
-        "access token" : access
+        "access_token": access
     }), HTTP_200_OK
