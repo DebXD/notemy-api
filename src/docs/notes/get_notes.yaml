@@ -9,8 +9,14 @@ parameters:
     description : "Bearer <TOKEN>"
     required : true
   - in: query
-    name : "Page No."
+    name : "page"
     description : "Desired page number"
+    required : false
+    schema:
+      type : integer
+  - in: query
+    name : "per_page"
+    description: "Desired items per page"
     required : false
     schema:
       type : integer
