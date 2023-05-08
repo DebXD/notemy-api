@@ -18,10 +18,11 @@ def create_app():
     app.config['SECRET_KEY'] = config("SECRET_KEY")
     app.config['SQLALCHEMY_DATABASE_URI'] = config("SQLALCHEMY_DB_URI")
     app.config['JWT_SECRET_KEY'] = config("JWT_SECRET_KEY")
+    
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=900)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
+    app.config["JWT_ALGORITHM"] = "HS512"
     db.init_app(app)
     JWTManager(app)
 
