@@ -1,9 +1,9 @@
 # Notemy-API
 - API Usage/Example/Test :
-  https://notemy-api.deta.dev
+  https://notemy.dustbin.me/
 
 ## Tutorial :
-#### API Base Endpoint : `https://notemy-api.deta.dev/api/v1`
+#### API Base Endpoint : `https://notemy.dustbin.me/api/v1`
 ##### USER :
 - User Registration Endpoint : `/auth/register` <br>
  Request Type : `POST`<br>
