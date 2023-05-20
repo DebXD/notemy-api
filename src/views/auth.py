@@ -7,6 +7,7 @@ import validators
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from cryptography.fernet import Fernet
 from flasgger import swag_from
+from datetime import datetime
 
 auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth/")
 
@@ -45,8 +46,9 @@ def register():
 
     # generate encryption key
     enc_key = Fernet.generate_key()
+    dt = datetime.now()
 
-    user = User(username = username, password=pwd_hash, email=email, enc_key=enc_key)
+    user = User(username = username, password=pwd_hash, email=email, enc_key=enc_key, created_at=dt)
     db.session.add(user)
     db.session.commit()
     return jsonify({"message" : "User created", 

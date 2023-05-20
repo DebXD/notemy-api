@@ -5,6 +5,7 @@ from flask_jwt_extended import get_jwt_identity , jwt_required
 from src.utils.enc_dec import encryptNote, decryptNote
 from flasgger import swag_from
 from sqlalchemy import desc
+from datetime import datetime
 
 
 notes = Blueprint("notes",__name__, url_prefix="/api/v1/notes/")
@@ -27,8 +28,9 @@ def addNotes():
 
     # encrypt title and note
     enc_title, enc_content = encryptNote(enc_key, title, content)
+    dt = datetime.now()
 
-    note = Notes(title=enc_title, content=enc_content, user_id=userId)
+    note = Notes(title=enc_title, content=enc_content, user_id=userId, created_at=dt)
     db.session.add(note)
     db.session.commit()
     # decrypt title and content and return it
@@ -133,9 +135,11 @@ def updateNote(id):
         
         #encrypt title and note
         enc_title, enc_content = encryptNote(enc_key, title, content)
+        dt = datetime.now()
         # add the updated encryped title and content to db
         note.title = enc_title
         note.content = enc_content
+        note.updated_at = dt
 
         db.session.commit()
         # decrypt title and content and return with modification
