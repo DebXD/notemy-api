@@ -2,6 +2,7 @@
 .space/
 linux-env/
 .envlocal
+Spacefile
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

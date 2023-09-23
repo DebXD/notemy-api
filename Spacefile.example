@@ -7,3 +7,8 @@ micros:
     primary: true
     public_routes:
       - "/*"
+    presets:
+      env:
+      - name: SECRET_MESSAGE
+      description: Secret message only available to this Micro
+      default: "actual secret"
