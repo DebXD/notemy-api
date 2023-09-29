@@ -117,7 +117,6 @@ app.post(
             username,
             email,
             accessToken,
-            key,
           },
         },
         200,
@@ -129,7 +128,6 @@ app.post(
         data: {
           username,
           accessToken,
-          key,
         },
       },
       200,
