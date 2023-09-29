@@ -7,7 +7,7 @@ COPY src ./
 
 RUN bun install
 # generate prisma client
-RUN bunx run prisma generate
+RUN bun run prisma generate
 # Copy the rest of the application code
 COPY . .
 
