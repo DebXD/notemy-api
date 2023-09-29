@@ -1,12 +1,13 @@
 FROM oven/bun:latest
 
+COPY --from=node:18 /usr/local/bin/node /usr/local/bin/node
 COPY package.json ./
 COPY bun.lockb ./
 COPY src ./
 
 RUN bun install
 # generate prisma client
-RUN bun run prisma generate
+RUN bunx run prisma generate
 # Copy the rest of the application code
 COPY . .
 
