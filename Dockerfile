@@ -1,16 +1,9 @@
-# Use the "oven/bun" base image
-FROM oven/bun
+FROM oven/bun:latest
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+COPY package.json ./
+COPY bun.lockb ./
+COPY src ./
 
-# Copy package.json and bun.lockb files
-COPY package*.json bun.lockb ./
-
-# Install Bun globally
-RUN npm install -g bun
-
-# Install project dependencies including Prisma
 RUN bun install
 
 # Copy the rest of the application code
