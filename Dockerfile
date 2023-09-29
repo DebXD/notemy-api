@@ -8,4 +8,4 @@ COPY . .
 
 ENV NODE_ENV production
 
-CMD [ "bun", "run" ]
+CMD [ "bun", "src/index.ts" ]

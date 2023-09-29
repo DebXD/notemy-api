@@ -6,12 +6,16 @@ import { decryptUserData, encryptUserData } from "../../utils/encryptData";
 const app = new Hono();
 const prisma = new PrismaClient();
 
+// This middleware gives this app instance protected route, and to check if jwt token valid or not
 app.use(
   "/*",
   jwt({
     secret: process.env.JWT_SECRET || "",
   }),
 );
+interface ContextParam {
+  id: number;
+}
 
 app.get("/", async (c: any) => {
   // console.log(c.req.header())
@@ -44,7 +48,7 @@ app.post(
     const payload = c.get("jwtPayload");
     const title = value.title;
     const desc = value.desc;
-    if (title === "" && desc === "" ) {
+    if (title === "" && desc === "") {
       return c.json(
         { success: false, message: "Title and desc both can not be empty" },
         400,
@@ -71,6 +75,29 @@ app.post(
     return c.json({ created: true, data: { title: title, desc: desc } }, 201);
   }),
 );
+
+app.get("/:id", async (c) => {
+  const requestedNoteId = c.req.param().id;
+  const payload = c.get("jwtPayload");
+  const userId = payload.id;
+  const note = await prisma.note.findMany({
+    where: { userId: userId, id: parseInt(requestedNoteId) },
+  });
+
+  const decryptedNote: Record<string, any> = {};
+  if (note[0].title && note[0].desc && payload.key) {
+    const decryptedNoteTitle = decryptUserData(note[0].title, payload.key);
+    const decryptedNoteDesc = decryptUserData(note[0].desc, payload.key);
+    decryptedNote.title = decryptedNoteTitle;
+    decryptedNote.desc = decryptedNoteDesc;
+    decryptedNote.id = note[0].id;
+    decryptedNote.createdAt = note[0].createdAt;
+    decryptedNote.updatedAt = note[0].updatedAt;
+    decryptedNote.userId = note[0].userId;
+  }
+
+  return c.json(decryptedNote, 200);
+});
 
 app.get("/page", (c) => {
   const payload = c.get("jwtPayload");
