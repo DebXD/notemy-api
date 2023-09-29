@@ -13,8 +13,5 @@
   },
   "devDependencies": {
     "bun-types": "^0.6.2"
-  },
-  "trustedDependencies": [
-    "@prisma/client"
-],
+  }
 }
