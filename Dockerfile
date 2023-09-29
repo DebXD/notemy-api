@@ -4,6 +4,7 @@ COPY --from=node:18 /usr/local/bin/node /usr/local/bin/node
 COPY package.json ./
 COPY bun.lockb ./
 COPY src ./
+COPY prisma ./
 
 RUN bun install
 # generate prisma client
