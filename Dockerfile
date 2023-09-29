@@ -5,7 +5,8 @@ COPY bun.lockb ./
 COPY src ./
 
 RUN bun install
-
+# generate prisma client
+RUN bun run prisma generate
 # Copy the rest of the application code
 COPY . .
 
