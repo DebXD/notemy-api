@@ -44,7 +44,6 @@ app.get("/", async (c: any) => {
 app.post(
   "/",
   validator("json", async (value, c) => {
-    console.log(value);
     const payload = c.get("jwtPayload");
     const title = value.title;
     const desc = value.desc;
@@ -80,23 +79,26 @@ app.get("/:id", async (c) => {
   const requestedNoteId = c.req.param().id;
   const payload = c.get("jwtPayload");
   const userId = payload.id;
-  const note = await prisma.note.findMany({
-    where: { userId: userId, id: parseInt(requestedNoteId) },
-  });
+  try {
+    const note = await prisma.note.findMany({
+      where: { userId: userId, id: parseInt(requestedNoteId) },
+    });
+    const decryptedNote: Record<string, any> = {};
+    if (note[0].title && note[0].desc && payload.key) {
+      const decryptedNoteTitle = decryptUserData(note[0].title, payload.key);
+      const decryptedNoteDesc = decryptUserData(note[0].desc, payload.key);
+      decryptedNote.title = decryptedNoteTitle;
+      decryptedNote.desc = decryptedNoteDesc;
+      decryptedNote.id = note[0].id;
+      decryptedNote.createdAt = note[0].createdAt;
+      decryptedNote.updatedAt = note[0].updatedAt;
+      decryptedNote.userId = note[0].userId;
+    }
 
-  const decryptedNote: Record<string, any> = {};
-  if (note[0].title && note[0].desc && payload.key) {
-    const decryptedNoteTitle = decryptUserData(note[0].title, payload.key);
-    const decryptedNoteDesc = decryptUserData(note[0].desc, payload.key);
-    decryptedNote.title = decryptedNoteTitle;
-    decryptedNote.desc = decryptedNoteDesc;
-    decryptedNote.id = note[0].id;
-    decryptedNote.createdAt = note[0].createdAt;
-    decryptedNote.updatedAt = note[0].updatedAt;
-    decryptedNote.userId = note[0].userId;
+    return c.json(decryptedNote, 200);
+  } catch {
+    return c.json({ success: false, message: "Invalid Note ID provided" }, 404);
   }
-
-  return c.json(decryptedNote, 200);
 });
 
 app.get("/page", (c) => {
