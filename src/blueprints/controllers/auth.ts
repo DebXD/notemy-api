@@ -1,10 +1,11 @@
 import { Hono } from "hono";
 import { validator } from "hono/validator";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { generateSalt } from "../../utils/genSalt";
 import PasswordValidator from "password-validator";
 import { z } from "zod";
 import * as jose from "jose";
+import { jwt } from "hono/jwt";
 
 const app = new Hono();
 const prisma = new PrismaClient();
@@ -114,7 +115,7 @@ app.post(
     const jwtSecret = process.env.JWT_SECRET || "";
     const secret = new TextEncoder().encode(jwtSecret);
     const accessToken = await new jose.SignJWT(payload)
-      .setExpirationTime('1h')
+      .setExpirationTime("1h")
       .setProtectedHeader({ alg: "HS256", exp: 100 })
       .sign(secret);
 
@@ -143,5 +144,36 @@ app.post(
     );
   }),
 );
+app.use(
+  "/*",
+  jwt({
+    secret: process.env.JWT_SECRET || "",
+  }),
+);
+
+app.get("/me", async (c: any) => {
+  const payload = c.get("jwtPayload");
+  if (payload) {
+    try {
+      const user = await prisma.user.findFirst({
+        where: { id: payload.id },
+      });
+      if (user) {
+        return c.json({
+          success: true,
+          data: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+          },
+        });
+      }
+    } catch (Error: any) {
+      return c.json({ success: false, message: Error.message });
+    }
+  }
+});
 
 export default app;
