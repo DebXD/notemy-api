@@ -3,8 +3,8 @@ import { validator } from "hono/validator";
 import { PrismaClient } from "@prisma/client";
 import { generateSalt } from "../../utils/genSalt";
 import PasswordValidator from "password-validator";
-import { sign, verify, decode } from "hono/jwt";
 import { z } from "zod";
+import * as jose from "jose";
 
 const app = new Hono();
 const prisma = new PrismaClient();
@@ -37,7 +37,7 @@ app.post(
     // const data = await ctx.req.json();
 
     const username = value.username;
-    type username = z.infer<typeof User>
+    type username = z.infer<typeof User>;
     const password = value.password;
 
     let email = null;
@@ -108,11 +108,15 @@ app.post(
     const payload = {
       id: userId,
       username: username,
-      key: key
+      key: key,
     };
 
-    const jwtSecret = process.env.JWT_SECRET || ""
-    const accessToken = await sign(payload, jwtSecret);
+    const jwtSecret = process.env.JWT_SECRET || "";
+    const secret = new TextEncoder().encode(jwtSecret);
+    const accessToken = await new jose.SignJWT(payload)
+      .setExpirationTime('1h')
+      .setProtectedHeader({ alg: "HS256", exp: 100 })
+      .sign(secret);
 
     if (email) {
       return ctx.json(

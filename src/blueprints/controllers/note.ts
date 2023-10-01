@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client";
-import { validator } from "hono/validator";
-import { jwt, verify } from "hono/jwt";
+import { jwt } from "hono/jwt";
 import { decryptUserData, encryptUserData } from "../../utils/encryptData";
 const app = new Hono();
 const prisma = new PrismaClient();
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+
 // This middleware gives this app instance protected route, and to check if jwt token valid or not
 app.use(
   "/*",
@@ -192,24 +192,21 @@ app.delete("/:id", zValidator("query", noteIdSchema), async (c: any) => {
   const requestedNoteId = c.req.param().id;
   const payload = c.get("jwtPayload");
   const userId = payload.id;
-  try{
-    if(requestedNoteId){
+  try {
+    if (requestedNoteId) {
       const deleteUser = await prisma.note.delete({
         where: {
           id: parseInt(requestedNoteId),
-          userId : userId
+          userId: userId,
         },
-      })
-      if(deleteUser){
-        console.log(deleteUser)
-        return c.json({success : true, message : "note is deleted"}, 204)
+      });
+      if (deleteUser) {
+        console.log(deleteUser);
+        return c.json({ success: true, message: "Note is deleted" }, 204);
       }
-
     }
-
-  }
-  catch(Error: any){
-    return c.json({success : false, message : Error.message})
+  } catch (Error: any) {
+    return c.json({ success: false, message: Error.message });
   }
 });
 
