@@ -4,10 +4,14 @@ import { PrismaClient } from "@prisma/client";
 import { generateSalt } from "../../utils/genSalt";
 import PasswordValidator from "password-validator";
 import { sign, verify, decode } from "hono/jwt";
-
+import { z } from "zod";
 
 const app = new Hono();
 const prisma = new PrismaClient();
+
+const User = z.object({
+  username: z.string(),
+});
 const passwordSchema = new PasswordValidator();
 passwordSchema
   .is()
@@ -33,6 +37,7 @@ app.post(
     // const data = await ctx.req.json();
 
     const username = value.username;
+    type username = z.infer<typeof User>
     const password = value.password;
 
     let email = null;

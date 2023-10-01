@@ -9,6 +9,6 @@ app.use("*", prettyJSON());
 app.notFound((ctx) => ctx.json({ message: "Not Found", ok: false }, 404));
 app.use("*", logger());
 app.route("/api/auth", auth);
-app.route("/api/auth/note", notes);
+app.route("/api/auth/notes", notes);
 
 export default app;
