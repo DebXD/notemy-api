@@ -116,7 +116,7 @@ app.post(
     const secret = new TextEncoder().encode(jwtSecret);
     const accessToken = await new jose.SignJWT(payload)
       .setExpirationTime("1h")
-      .setProtectedHeader({ alg: "HS256", exp: 100 })
+      .setProtectedHeader({ alg: "HS256" })
       .sign(secret);
 
     if (email) {
@@ -151,7 +151,55 @@ app.use(
   }),
 );
 
+import getRedisClient from "../../utils/redisClient";
+import { cacheApiResponse } from "../../utils/cache/createCache";
+const redis = getRedisClient();
+
 app.get("/me", async (c: any) => {
+  const payload = c.get("jwtPayload");
+  if (payload) {
+    try {
+      if (redis) {
+        try {
+          // console.log("trying to fetch from redis");
+          const cache = await redis.get(payload.username + c.req.path);
+          if (cache) {
+            // console.log(cache);
+            const data = JSON.parse(cache);
+            return c.json({ success: true, data });
+          } else {
+            throw Error;
+          }
+        } catch (Error) {
+          console.log("trying to fetch from db");
+          const user = await prisma.user.findFirst({
+            where: { id: payload.id },
+          });
+          if (user) {
+            const data = {
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              createdAt: user.createdAt,
+              updatedAt: user.updatedAt,
+            };
+            const json = JSON.stringify(data);
+            await redis.set(user.username + c.req.path, json, "EX", 3600);
+            console.log("value is set");
+
+            return c.json({
+              success: true,
+              data,
+            });
+          }
+        }
+      }
+    } catch (Error: any) {
+      return c.json({ success: false, message: Error.message });
+    }
+  }
+});
+app.get("/meo", async (c: any) => {
   const payload = c.get("jwtPayload");
   if (payload) {
     try {
@@ -175,5 +223,4 @@ app.get("/me", async (c: any) => {
     }
   }
 });
-
 export default app;

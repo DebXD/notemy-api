@@ -8,6 +8,7 @@
     "crypto-js": "^4.1.1",
     "dotenv": "^16.3.1",
     "hono": "^3.6.0",
+    "ioredis": "^5.3.2",
     "jose": "^4.14.6",
     "password-validator": "^5.3.0",
     "prisma": "^5.3.1",

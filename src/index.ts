@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { default as auth } from "./blueprints/controllers/auth";
-import { default as notes } from "./blueprints/controllers/note";
+import { default as notes } from "./blueprints/controllers/notes";
 import { prettyJSON } from "hono/pretty-json";
 import { logger } from "hono/logger";
 
