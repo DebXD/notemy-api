@@ -96,7 +96,7 @@ app.post(
     const user = await prisma.user.findMany({ where: { username: username } });
 
     if (!user[0]) {
-      return ctx.text("Invalid!", 400);
+      return ctx.text("Invalid! or User does not exist", 400);
     } else {
       if ((await Bun.password.verify(password, user[0].password)) === false) {
         return ctx.text("Password didn't match!");
@@ -119,25 +119,16 @@ app.post(
       .setProtectedHeader({ alg: "HS256" })
       .sign(secret);
 
-    if (email) {
-      return ctx.json(
-        {
-          success: true,
-          data: {
-            username,
-            email,
-            accessToken,
-          },
-        },
-        200,
-      );
-    }
     return ctx.json(
       {
         success: true,
         data: {
-          username,
-          accessToken,
+          id: userId,
+          username: username,
+          email: email,
+          accessToken: accessToken,
+          createdAt: user[0].createdAt,
+          updatedAt: user[0].updatedAt,
         },
       },
       200,
@@ -152,7 +143,6 @@ app.use(
 );
 
 import getRedisClient from "../../utils/redisClient";
-import { cacheApiResponse } from "../../utils/cache/createCache";
 const redis = getRedisClient();
 
 app.get("/me", async (c: any) => {

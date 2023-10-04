@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client";
 import { jwt } from "hono/jwt";
-import { decryptUserData, encryptUserData } from "../../utils/encryptData";
+import { decryptUserData, encryptUserData } from "../../../utils/encryptData";
 const app = new Hono();
 const prisma = new PrismaClient();
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import getRedisClient from "../../utils/redisClient";
+import getRedisClient from "../../../utils/redisClient";
 
 // This middleware gives this app instance protected route, and to check if jwt token valid or not
 app.use(
@@ -25,7 +25,7 @@ app.get("/", async (c: any) => {
   try {
     if (redis) {
       try {
-        console.log("trying to fetch from redis");
+        // console.log("trying to fetch from redis");
         const cache = await redis.get(payload.username + c.req.path);
         if (cache) {
           // console.log(cache);
@@ -55,7 +55,7 @@ app.get("/", async (c: any) => {
           });
           const json = JSON.stringify(decryptedNotesList);
           await redis.set(payload.username + c.req.path, json, "EX", 3600);
-          console.log("notes value is set");
+          // console.log("notes value is set");
 
           return c.json({ success: true, data: decryptedNotesList }, 200);
         } catch (Error: any) {
@@ -67,6 +67,7 @@ app.get("/", async (c: any) => {
     return c.json({ success: false, message: Error.message });
   }
 });
+
 const noteSchema = z.object({
   title: z.string(),
   desc: z.string(),
@@ -91,7 +92,7 @@ app.post("/", zValidator("json", noteSchema), async (c) => {
   }
   const encTitle = encryptUserData(title, payload.key);
   const encDesc = encryptUserData(desc, payload.key);
-  console.log(typeof encTitle);
+  // console.log(typeof encTitle);
   // create a new user
   try {
     await prisma.note.create({
@@ -106,7 +107,7 @@ app.post("/", zValidator("json", noteSchema), async (c) => {
       const redis = getRedisClient();
       if (redis) {
         const deleteCache = await redis.del(payload.username + c.req.path);
-        console.log("deleted stored cache");
+        // console.log("deleted stored cache");
         if (!deleteCache) {
           throw Error;
         }
@@ -132,7 +133,7 @@ app.get("/:id", zValidator("param", noteIdSchema), async (c: any) => {
   const userId = payload.id;
   if (redis) {
     try {
-      console.log("trying to fetch from redis");
+      // console.log("trying to fetch from redis");
       const cache = await redis.get(payload.username + c.req.path);
       if (cache) {
         // console.log(cache);
@@ -143,7 +144,7 @@ app.get("/:id", zValidator("param", noteIdSchema), async (c: any) => {
       }
     } catch (Error: any) {
       try {
-        console.log("trying to fetch from db");
+        // console.log("trying to fetch from db");
         if (requestedNoteId) {
           const note = await prisma.note.findMany({
             where: { userId: userId, id: parseInt(requestedNoteId) },
@@ -159,7 +160,7 @@ app.get("/:id", zValidator("param", noteIdSchema), async (c: any) => {
           }
           const json = JSON.stringify(decryptedNote);
           await redis.set(payload.username + c.req.path, json, "EX", 3600);
-          console.log("note value is set");
+          // console.log("note value is set");
 
           return c.json(decryptedNote, 200);
         }
@@ -223,10 +224,15 @@ app.patch(
             return c.json(
               {
                 success: true,
-                title: title,
-                desc: desc,
+                data: {
+                  id : note[0].id,
+                  title: title,
+                  desc: desc,
+                  createdAt : note[0].createdAt,
+                  updatedAt : note[0].updatedAt
+                },
               },
-              201,
+              200,
             );
           }
         } catch (Error: any) {
@@ -237,7 +243,7 @@ app.patch(
           const redis = getRedisClient();
           if (redis) {
             const deleteCache = await redis.del(payload.username + c.req.path);
-            console.log("deleted stored cache");
+            // console.log("deleted stored cache");
             if (!deleteCache) {
               throw Error;
             }
@@ -265,6 +271,8 @@ app.patch(
     }
   },
 );
+
+//? DELETE NOTE
 app.delete("/:id", zValidator("query", noteIdSchema), async (c: any) => {
   const requestedNoteId = c.req.param().id;
   const payload = c.get("jwtPayload");
@@ -284,7 +292,7 @@ app.delete("/:id", zValidator("query", noteIdSchema), async (c: any) => {
           const redis = getRedisClient();
           if (redis) {
             const deleteCache = await redis.del(payload.username + c.req.path);
-            console.log("deleted stored cache");
+            // console.log("deleted stored cache");
             if (!deleteCache) {
               throw Error;
             }

@@ -1,14 +1,13 @@
 import { Hono } from "hono";
-import { default as auth } from "./blueprints/controllers/auth";
-import { default as notes } from "./blueprints/controllers/notes";
 import { prettyJSON } from "hono/pretty-json";
 import { logger } from "hono/logger";
+import notemy from "./blueprints/controllers/route";
 
 const app = new Hono();
 app.use("*", prettyJSON());
 app.notFound((ctx) => ctx.json({ message: "Not Found", ok: false }, 404));
 app.use("*", logger());
-app.route("/api/auth", auth);
-app.route("/api/auth/notes", notes);
+app.route("/api/auth", notemy);
+
 
 export default app;
