@@ -21,7 +21,7 @@ jobs:
         run: bun install
 
       - name: Execute bun index.ts
-        run: bun index.ts
+        run: bun src/index.ts
 
       - name: Build
         run: bun run build
