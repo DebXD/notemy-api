@@ -98,15 +98,34 @@ app.post("/", zValidator("json", noteSchema), async (c) => {
 				userId: payload.id,
 			},
 		});
-		//invalidate cache
-		if (redis) {
-			const deleteCache = await redis.del(payload.username + c.req.path);
-			if (!deleteCache) {
-				throw new Error();
+		try {
+			//invalidate cache
+			if (redis) {
+				await redis.del(payload.username + c.req.path);
 			}
+		} catch (err) {
+			console.log(err);
+			return c.json({ success: false, message: "failed to update cache" });
 		}
 
-		return c.json({ created: true, data: { title: title, desc: desc } }, 201);
+		const data = await prisma.note.findFirst({
+			orderBy: {
+				id: "desc",
+			},
+		});
+		return c.json(
+			{
+				created: true,
+				data: {
+					id: data?.id,
+					title: title,
+					desc: desc,
+					createdAt: data?.createdAt,
+					updatedAt: data?.updatedAt,
+				},
+			},
+			201,
+		);
 	} catch (err: any) {
 		return c.json({ success: false, message: err.message });
 	}
