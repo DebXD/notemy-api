@@ -28,17 +28,22 @@ app.get("/", async (c: Context) => {
 	try {
 		if (redis) {
 			try {
-				const cache = await redis.get(payload.username + c.req.path);
+				console.log("Fetching from redis");
+				const cache = await redis.get(payload.username);
 				if (cache) {
-					// console.log(cache);
+					console.log(cache);
 					const data = JSON.parse(cache);
 					return c.json({ success: true, data });
 				} else {
 					throw new Error();
 				}
 			} catch (err) {
+				console.log("fetching from db");
 				const notes = await prisma.note.findMany({
 					where: { userId: userId },
+					orderBy: {
+						id: "desc",
+					},
 				});
 				const decryptedNotesList: any[] = [];
 				const key = payload.key;
@@ -55,8 +60,8 @@ app.get("/", async (c: Context) => {
 					}
 				});
 				const json = JSON.stringify(decryptedNotesList);
-				await redis.set(payload.username + c.req.path, json, "EX", 3600);
-				// console.log("notes value is set");
+				await redis.set(payload.username, json, "EX", 3600);
+				console.log("notes value is set");
 
 				return c.json({ success: true, data: decryptedNotesList }, 200);
 			}
@@ -101,7 +106,7 @@ app.post("/", zValidator("json", noteSchema), async (c) => {
 		try {
 			//invalidate cache
 			if (redis) {
-				await redis.del(payload.username + c.req.path);
+				await redis.del(payload.username);
 			}
 		} catch (err) {
 			console.log(err);
@@ -168,7 +173,7 @@ app.get("/:id", zValidator("param", noteIdSchema), async (c: any) => {
 						decryptedNote.userId = note[0].userId;
 					}
 					const json = JSON.stringify(decryptedNote);
-					await redis.set(payload.username + c.req.path, json, "EX", 3600);
+					await redis.set(payload.username, json, "EX", 3600);
 					// console.log("note value is set");
 
 					return c.json(decryptedNote, 200);
@@ -231,11 +236,8 @@ app.patch(
 				if (updateNote) {
 					//invalidate cache
 					if (redis) {
-						const deleteCache = await redis.del(payload.username + c.req.path);
+						await redis.del(payload.username);
 						// console.log("deleted stored cache");
-						if (!deleteCache) {
-							throw Error;
-						}
 					}
 
 					return c.json(
@@ -278,11 +280,14 @@ app.delete("/:id", zValidator("query", noteIdSchema), async (c: any) => {
 			if (deleteUser) {
 				//invalidate cache
 				if (redis) {
-					const deleteCache = await redis.del(payload.username + c.req.path);
-					// console.log("deleted stored cache");
-					if (!deleteCache) {
-						throw Error;
-					}
+					await redis.del(payload.username, (err, result) => {
+						if (err) {
+							console.error("Error deleting key:", err);
+						} else {
+							console.log(`Deleted ${result} key(s)`);
+						}
+					});
+					console.log("deleted stored cache");
 				}
 
 				return c.json({ success: true, message: "Note is deleted" }, 204);
