@@ -42,7 +42,7 @@ app.get("/", async (c: Context) => {
 				const notes = await prisma.note.findMany({
 					where: { userId: userId },
 					orderBy: {
-						id: "desc",
+						id: "asc",
 					},
 				});
 				const decryptedNotesList: any[] = [];
