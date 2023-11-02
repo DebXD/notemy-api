@@ -21,7 +21,7 @@ const getUser = app.get("/", async (c: any) => {
 			if (redis) {
 				try {
 					// console.log("trying to fetch from redis");
-					const cache = await redis.get(payload.username);
+					const cache = await redis.get(payload.username + c.req.path);
 					if (cache) {
 						// console.log(cache);
 						const data = JSON.parse(cache);
@@ -43,7 +43,7 @@ const getUser = app.get("/", async (c: any) => {
 							updatedAt: user.updatedAt,
 						};
 						const json = JSON.stringify(data);
-						await redis.set(user.username, json, "EX", 3600);
+						await redis.set(user.username + c.req.path, json, "EX", 3600);
 						console.log("value is set");
 
 						return c.json({

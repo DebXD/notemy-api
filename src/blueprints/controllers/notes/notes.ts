@@ -29,7 +29,8 @@ app.get("/", async (c: Context) => {
 		if (redis) {
 			try {
 				console.log("Fetching from redis");
-				const cache = await redis.get(payload.username);
+				const cache = await redis.get(payload.username + c.req.path);
+				console.log(c.req.path);
 				if (cache) {
 					console.log(cache);
 					const data = JSON.parse(cache);
@@ -60,7 +61,7 @@ app.get("/", async (c: Context) => {
 					}
 				});
 				const json = JSON.stringify(decryptedNotesList);
-				await redis.set(payload.username, json, "EX", 3600);
+				await redis.set(payload.username + c.req.path, json, "EX", 3600);
 				console.log("notes value is set");
 
 				return c.json({ success: true, data: decryptedNotesList }, 200);
@@ -106,7 +107,8 @@ app.post("/", zValidator("json", noteSchema), async (c) => {
 		try {
 			//invalidate cache
 			if (redis) {
-				await redis.del(payload.username);
+				await redis.del(payload.username + c.req.path);
+				await redis.del(payload.username, "/api/auth/notes");
 			}
 		} catch (err) {
 			console.log(err);
@@ -173,7 +175,7 @@ app.get("/:id", zValidator("param", noteIdSchema), async (c: any) => {
 						decryptedNote.userId = note[0].userId;
 					}
 					const json = JSON.stringify(decryptedNote);
-					await redis.set(payload.username, json, "EX", 3600);
+					await redis.set(payload.username + c.req.path, json, "EX", 3600);
 					// console.log("note value is set");
 
 					return c.json(decryptedNote, 200);
@@ -236,7 +238,8 @@ app.patch(
 				if (updateNote) {
 					//invalidate cache
 					if (redis) {
-						await redis.del(payload.username);
+						await redis.del(payload.username + c.req.path);
+						await redis.del(payload.username, "/api/auth/notes");
 						// console.log("deleted stored cache");
 					}
 
@@ -280,13 +283,15 @@ app.delete("/:id", zValidator("query", noteIdSchema), async (c: any) => {
 			if (deleteUser) {
 				//invalidate cache
 				if (redis) {
-					await redis.del(payload.username, (err, result) => {
+					await redis.del(payload.username + c.req.path, (err, result) => {
 						if (err) {
 							console.error("Error deleting key:", err);
 						} else {
 							console.log(`Deleted ${result} key(s)`);
 						}
 					});
+
+					await redis.del(payload.username, "/api/auth/notes");
 					console.log("deleted stored cache");
 				}
 
