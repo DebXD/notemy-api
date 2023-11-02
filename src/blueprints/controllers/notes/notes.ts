@@ -295,7 +295,7 @@ app.delete("/:id", zValidator("query", noteIdSchema), async (c: any) => {
 					console.log("deleted stored cache");
 				}
 
-				return c.json({ success: true, message: "Note is deleted" }, 204);
+				return c.json({ success: true, message: "Note is deleted" }, 200);
 			}
 		}
 	} catch (err: any) {
