@@ -178,7 +178,7 @@ app.get("/:id", zValidator("param", noteIdSchema), async (c: any) => {
 					await redis.set(payload.username + c.req.path, json, "EX", 3600);
 					// console.log("note value is set");
 
-					return c.json(decryptedNote, 200);
+					return c.json({ success: true, data: decryptedNote }, 200);
 				}
 			} catch {
 				return c.json(
