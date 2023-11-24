@@ -299,7 +299,7 @@ app.delete("/:id", zValidator("query", noteIdSchema), async (c: any) => {
 			}
 		}
 	} catch (err: any) {
-		return c.json({ success: false, message: err.message });
+		return c.json({ success: false, message: " Note does not exist" }, 404);
 	}
 });
 
