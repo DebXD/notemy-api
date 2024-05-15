@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { prettyJSON } from "hono/pretty-json";
 import { logger } from "hono/logger";
-import notemy from "./blueprints/controllers/route";
 import swagger from "./docs/swagger";
+import notemy from "./blueprints/controllers/route";
 
 const app = new Hono();
 app.use("*", prettyJSON());
