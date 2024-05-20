@@ -2,11 +2,12 @@ import { Context, Hono } from "hono";
 import { PrismaClient } from "@prisma/client";
 import { jwt } from "hono/jwt";
 import { decryptUserData, encryptUserData } from "../../../utils/encryptData";
-const app = new Hono();
-const prisma = new PrismaClient();
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import getRedisClient from "../../../utils/redisClient";
+
+const app = new Hono();
+const prisma = new PrismaClient();
 
 // This middleware gives this app instance protected route, and to check if jwt token valid or not
 app.use(
@@ -109,13 +110,12 @@ app.post("/", zValidator("json", noteSchema), async (c) => {
         userId: payload.id,
       },
     });
-    console.log("note created")
+    console.log("note created");
     try {
       //invalidate cache
       if (redis) {
         await redis.del(payload.username + c.req.path);
         await redis.del(payload.username, "/api/auth/notes");
-
       }
     } catch (err) {
       console.log(err);
@@ -244,18 +244,14 @@ app.patch(
             },
           });
 
-
           //invalidate cache
           if (redis) {
             await redis.del(payload.username + c.req.path);
-            console.log(payload.username)
+            console.log(payload.username);
             await redis.del("demouser/api/auth/notes");
-
           }
-
-        }
-        catch (err) {
-          console.log("something gone wrong", err)
+        } catch (err) {
+          console.log("something gone wrong", err);
         }
 
         return c.json(
@@ -294,7 +290,7 @@ app.delete("/:id", zValidator("query", noteIdSchema), async (c: any) => {
           userId: userId,
         },
       });
-      
+
       if (deleteUser) {
         //invalidate cache
         if (redis) {

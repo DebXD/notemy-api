@@ -316,7 +316,7 @@ swagger.openAPIRegistry.registerPath({
 	method: "get",
 	path: "/notes/{id}",
 	tags: ["Notes"],
-	summary: "Get user all Notes",
+	summary: "Get Specific note",
 	request: {
 		params: z.object({
 			id: z.string().openapi({ example: "1" }),
