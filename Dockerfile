@@ -7,6 +7,7 @@ COPY src ./
 COPY prisma ./
 
 RUN bun install
+RUN apt install wget
 # generate prisma client
 RUN bun run prisma generate
 # Copy the rest of the application code
