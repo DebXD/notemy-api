@@ -6,7 +6,9 @@ COPY bun.lockb ./
 COPY src ./
 COPY prisma ./
 
-RUN apt install -y wget
+RUN apt-get update && \
+    apt-get install -y wget && \
+    rm -rf /var/lib/apt/lists/*
 RUN bun install
 # generate prisma client
 RUN bun run prisma generate
