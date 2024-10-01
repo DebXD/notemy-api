@@ -246,9 +246,8 @@ app.patch(
 
           //invalidate cache
           if (redis) {
-            await redis.del(payload.username + c.req.path);
-            console.log(payload.username);
-            await redis.del("demouser/api/auth/notes");
+            // await redis.del(payload.username + c.req.path);
+            await redis.del(`${payload.username}/api/auth/notes`);
           }
         } catch (err) {
           console.log("something gone wrong", err);
